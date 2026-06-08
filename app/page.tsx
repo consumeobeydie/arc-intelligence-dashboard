@@ -1,65 +1,186 @@
-import Image from "next/image";
+'use client';
 
-export default function Home() {
+import { useState, useEffect } from 'react';
+import { createPublicClient, http, formatUnits } from 'viem';
+
+const arcTestnet = {
+  id: 5042002,
+  name: 'Arc Testnet',
+  nativeCurrency: { name: 'USDC', symbol: 'USDC', decimals: 18 },
+  rpcUrls: { default: { http: ['https://rpc.testnet.arc.network'] } },
+  blockExplorers: { default: { name: 'Arcscan', url: 'https://testnet.arcscan.app' } },
+  testnet: true,
+};
+
+const MAIN_AGENT = '0x54b4B44749a95070560509B6Ec0be501665CcF63';
+const USDC_CONTRACT = '0x3600000000000000000000000000000000000000';
+
+const erc20Abi = [
+  { name: 'balanceOf', type: 'function' as const, stateMutability: 'view' as const, inputs: [{ name: 'account', type: 'address' }], outputs: [{ name: '', type: 'uint256' }] },
+];
+
+const contracts = [
+  { name: 'HelloArchitect', address: '0xD19CC6F46740b49D8fA5146725609CeB7A6ee86b' },
+  { name: 'SimpleStorage', address: '0x0BCBE7579897cF25C846aFf614feC3666AFBe116' },
+  { name: 'EventLogger', address: '0x9C50765e591663ED541B2fB863626f39fC6C12e0' },
+  { name: 'Counter', address: '0x5CE58ee895F4c0FDFA774E4795c9eDa9c5930c8f' },
+  { name: 'Whitelist', address: '0x331344f3dbd6fb654d4CB25db6Ce5B4D2949AE7E' },
+  { name: 'ERC721 NFT', address: '0x52C457C9BC8C6f4d7B7Bb5adE4D7FEfA4aE5Cf76' },
+  { name: 'ERC20 Token', address: '0xEC1D5372368a1b865aFA984FBF87E09CB2116768' },
+  { name: 'Voting', address: '0xccEDE5e65e29616a5F6E3b93B71011896a8C66F2' },
+  { name: 'TimeLock', address: '0x13EDC06FC938dF2ca8225474221BeB5e3Ee15Ec4' },
+  { name: 'Escrow', address: '0x4937B993530817debe2A9ed3105A9BBF969b17a9' },
+  { name: 'MultiSig', address: '0x5b9c9E0f2a57981F5315E7bA95bc830E9e00A2DD' },
+  { name: 'Staking', address: '0xaDD109D81eBb3B59b58e4fb3d78bb9497917193d' },
+  { name: 'Lottery', address: '0xB80dc31CE5da607051E37f005D44990b51D468F6' },
+  { name: 'Vesting', address: '0x240365eAD3de331268d18B4E0c50C33f337Db86a' },
+  { name: 'DAO', address: '0x3f94600877D990dd966dd83493b454A726A73d95' },
+];
+
+const prs = [
+  'docs/foundry-smart-contract-deploy-guide',
+  'docs/x402-arc-agent-example',
+  'docs/erc8004-agent-registration-example',
+  'docs/erc8183-job-lifecycle-example',
+  'docs/unified-agentic-flow-example',
+];
+
+export default function Dashboard() {
+  const [balance, setBalance] = useState('...');
+  const [blockNumber, setBlockNumber] = useState('...');
+  const [txCount, setTxCount] = useState('...');
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const client = createPublicClient({ chain: arcTestnet as any, transport: http() });
+
+    async function fetchData() {
+      try {
+        const bal = await client.readContract({
+          address: USDC_CONTRACT as `0x${string}`,
+          abi: erc20Abi,
+          functionName: 'balanceOf',
+          args: [MAIN_AGENT as `0x${string}`],
+        });
+        const block = await client.getBlockNumber();
+        const txs = await client.getTransactionCount({ address: MAIN_AGENT as `0x${string}` });
+        setBalance(formatUnits(bal as bigint, 6));
+        setBlockNumber(block.toString());
+        setTxCount(txs.toString());
+      } catch (e) {
+        console.error(e);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchData();
+    const interval = setInterval(fetchData, 10000);
+    return () => clearInterval(interval);
+  }, []);
+
+  const explorerUrl = `https://testnet.arcscan.app/address/${MAIN_AGENT}`;
+
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
+    <main className="min-h-screen bg-black text-white font-mono">
+      <div className="border-b border-green-500/30 px-8 py-6">
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-2xl font-bold text-green-400 tracking-widest uppercase">Arc Intelligence</h1>
+            <p className="text-green-600 text-xs mt-1 tracking-widest">TESTNET DASHBOARD v1.0</p>
+          </div>
+          <div className="text-right">
+            <div className="text-xs text-green-600 tracking-widest">CHAIN ID</div>
+            <div className="text-green-400 font-bold">5042002</div>
+          </div>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
+      </div>
+
+      <div className="px-8 py-6 space-y-6">
+        <div className="border border-green-500/30 p-4 rounded">
+          <div className="text-xs text-green-600 tracking-widest mb-2">MAIN AGENT ADDRESS</div>
+          <a href={explorerUrl} target="_blank" rel="noopener noreferrer" className="text-green-400 hover:text-green-300 text-sm break-all">
+            {MAIN_AGENT}
           </a>
         </div>
-      </main>
-    </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="border border-green-500/30 p-4 rounded">
+            <div className="text-xs text-green-600 tracking-widest mb-2">USDC BALANCE</div>
+            <div className="text-3xl font-bold text-green-400">{loading ? '...' : balance}</div>
+            <div className="text-xs text-green-700 mt-1">ERC-20 USDC</div>
+          </div>
+          <div className="border border-green-500/30 p-4 rounded">
+            <div className="text-xs text-green-600 tracking-widest mb-2">LATEST BLOCK</div>
+            <div className="text-3xl font-bold text-green-400">{loading ? '...' : Number(blockNumber).toLocaleString()}</div>
+            <div className="text-xs text-green-700 mt-1">ARC TESTNET</div>
+          </div>
+          <div className="border border-green-500/30 p-4 rounded">
+            <div className="text-xs text-green-600 tracking-widest mb-2">TX COUNT</div>
+            <div className="text-3xl font-bold text-green-400">{loading ? '...' : txCount}</div>
+            <div className="text-xs text-green-700 mt-1">TOTAL TRANSACTIONS</div>
+          </div>
+        </div>
+
+        <div className="border border-green-500/30 p-4 rounded">
+          <div className="text-xs text-green-600 tracking-widest mb-4">AGENTIC STACK</div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="border border-green-500/20 p-3 rounded">
+              <div className="text-green-400 font-bold text-sm mb-1">X402 PAYMENT</div>
+              <div className="text-xs text-green-700">Protocol: x402-express</div>
+              <div className="text-xs text-green-700">Network: Base Sepolia</div>
+              <div className="text-xs text-green-700">Price: $0.001 USDC/req</div>
+              <div className="mt-2 text-xs text-green-500">ACTIVE</div>
+            </div>
+            <div className="border border-green-500/20 p-3 rounded">
+              <div className="text-green-400 font-bold text-sm mb-1">ERC-8004 IDENTITY</div>
+              <div className="text-xs text-green-700">Agent ID: 69828</div>
+              <div className="text-xs text-green-700">Reputation: 95</div>
+              <div className="text-xs text-green-700">Tag: x402_payment_verified</div>
+              <div className="mt-2 text-xs text-green-500">REGISTERED</div>
+            </div>
+            <div className="border border-green-500/20 p-3 rounded">
+              <div className="text-green-400 font-bold text-sm mb-1">ERC-8183 JOB</div>
+              <div className="text-xs text-green-700">Job ID: 110935</div>
+              <div className="text-xs text-green-700">Budget: 1 USDC</div>
+              <div className="text-xs text-green-700">Status: Completed</div>
+              <div className="mt-2 text-xs text-green-500">COMPLETED</div>
+            </div>
+          </div>
+        </div>
+
+        <div className="border border-green-500/30 p-4 rounded">
+          <div className="text-xs text-green-600 tracking-widest mb-4">DEPLOYED CONTRACTS ({contracts.length})</div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
+            {contracts.map((c) => (
+              <a key={c.address} href={`https://testnet.arcscan.app/address/${c.address}`} target="_blank" rel="noopener noreferrer"
+                className="flex items-center justify-between border border-green-500/20 p-2 rounded hover:border-green-500/50 transition-colors group">
+                <span className="text-xs text-green-400 group-hover:text-green-300">{c.name}</span>
+                <span className="text-xs text-green-700 group-hover:text-green-600">{c.address.slice(0, 6)}...{c.address.slice(-4)}</span>
+              </a>
+            ))}
+          </div>
+        </div>
+
+        <div className="border border-green-500/30 p-4 rounded">
+          <div className="text-xs text-green-600 tracking-widest mb-4">CIRCLEFIN/ARC-NODE CONTRIBUTIONS</div>
+          <div className="space-y-2">
+            {prs.map((pr) => (
+              <div key={pr} className="flex items-center gap-2 text-xs">
+                <span className="text-green-500">→</span>
+                <span className="text-green-400">{pr}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div className="border-t border-green-500/30 pt-4 flex justify-between text-xs text-green-700">
+          <span>Arc Testnet | Chain ID: 5042002</span>
+          <a href="https://github.com/consumeobeydie/arc-agent-api" target="_blank" rel="noopener noreferrer" className="hover:text-green-500">
+            github.com/consumeobeydie
+          </a>
+        </div>
+      </div>
+    </main>
   );
 }
