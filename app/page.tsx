@@ -43,6 +43,15 @@ const prs = [
   'docs/erc8004-agent-registration-example',
   'docs/erc8183-job-lifecycle-example',
   'docs/unified-agentic-flow-example',
+  'docs/arc-intelligence-dashboard-example',
+  'docs/arc-mcp-server-example',
+];
+
+const projects = [
+  { name: 'Arc Agent API', desc: 'X402 + ERC-8004 + ERC-8183', url: 'https://github.com/consumeobeydie/arc-agent-api', status: 'LIVE' },
+  { name: 'Arc MCP Server', desc: 'Claude Code blockchain tools', url: 'https://github.com/consumeobeydie/arc-mcp-server', status: 'LIVE' },
+  { name: 'Arc Intelligence Dashboard', desc: 'Real-time testnet dashboard', url: 'https://arc-intelligence-dashboard.vercel.app', status: 'LIVE' },
+  { name: 'Hermes Arc X402', desc: 'Nous Research skill', url: 'https://github.com/consumeobeydie/hermes-arc-x402', status: 'LIVE' },
 ];
 
 export default function Dashboard() {
@@ -79,15 +88,13 @@ export default function Dashboard() {
     return () => clearInterval(interval);
   }, []);
 
-  const explorerUrl = `https://testnet.arcscan.app/address/${MAIN_AGENT}`;
-
   return (
     <main className="min-h-screen bg-black text-white font-mono">
       <div className="border-b border-green-500/30 px-8 py-6">
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-2xl font-bold text-green-400 tracking-widest uppercase">Arc Intelligence</h1>
-            <p className="text-green-600 text-xs mt-1 tracking-widest">TESTNET DASHBOARD v1.0</p>
+            <p className="text-green-600 text-xs mt-1 tracking-widest">TESTNET DASHBOARD v2.0</p>
           </div>
           <div className="text-right">
             <div className="text-xs text-green-600 tracking-widest">CHAIN ID</div>
@@ -99,7 +106,7 @@ export default function Dashboard() {
       <div className="px-8 py-6 space-y-6">
         <div className="border border-green-500/30 p-4 rounded">
           <div className="text-xs text-green-600 tracking-widest mb-2">MAIN AGENT ADDRESS</div>
-          <a href={explorerUrl} target="_blank" rel="noopener noreferrer" className="text-green-400 hover:text-green-300 text-sm break-all">
+          <a href={`https://testnet.arcscan.app/address/${MAIN_AGENT}`} target="_blank" rel="noopener noreferrer" className="text-green-400 hover:text-green-300 text-sm break-all">
             {MAIN_AGENT}
           </a>
         </div>
@@ -150,6 +157,22 @@ export default function Dashboard() {
         </div>
 
         <div className="border border-green-500/30 p-4 rounded">
+          <div className="text-xs text-green-600 tracking-widest mb-4">PROJECTS</div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+            {projects.map((p) => (
+              <a key={p.name} href={p.url} target="_blank" rel="noopener noreferrer"
+                className="flex items-center justify-between border border-green-500/20 p-3 rounded hover:border-green-500/50 transition-colors group">
+                <div>
+                  <div className="text-xs text-green-400 group-hover:text-green-300 font-bold">{p.name}</div>
+                  <div className="text-xs text-green-700 mt-1">{p.desc}</div>
+                </div>
+                <div className="text-xs text-green-500">{p.status}</div>
+              </a>
+            ))}
+          </div>
+        </div>
+
+        <div className="border border-green-500/30 p-4 rounded">
           <div className="text-xs text-green-600 tracking-widest mb-4">DEPLOYED CONTRACTS ({contracts.length})</div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
             {contracts.map((c) => (
@@ -163,7 +186,7 @@ export default function Dashboard() {
         </div>
 
         <div className="border border-green-500/30 p-4 rounded">
-          <div className="text-xs text-green-600 tracking-widest mb-4">CIRCLEFIN/ARC-NODE CONTRIBUTIONS</div>
+          <div className="text-xs text-green-600 tracking-widest mb-4">CIRCLEFIN/ARC-NODE CONTRIBUTIONS ({prs.length} PRs)</div>
           <div className="space-y-2">
             {prs.map((pr) => (
               <div key={pr} className="flex items-center gap-2 text-xs">
@@ -174,9 +197,23 @@ export default function Dashboard() {
           </div>
         </div>
 
+        <div className="border border-green-500/30 p-4 rounded">
+          <div className="text-xs text-green-600 tracking-widest mb-4">NOUS RESEARCH / HERMES-AGENT CONTRIBUTIONS</div>
+          <div className="space-y-2">
+            <div className="flex items-center gap-2 text-xs">
+              <span className="text-green-500">→</span>
+              <span className="text-green-400">PR #41233 — feat: add x402-payment skill for autonomous USDC micropayments</span>
+            </div>
+            <div className="flex items-center gap-2 text-xs">
+              <span className="text-green-500">→</span>
+              <span className="text-green-400">PR #42968 — feat: add ERC-8183 agentic commerce job skill</span>
+            </div>
+          </div>
+        </div>
+
         <div className="border-t border-green-500/30 pt-4 flex justify-between text-xs text-green-700">
           <span>Arc Testnet | Chain ID: 5042002</span>
-          <a href="https://github.com/consumeobeydie/arc-agent-api" target="_blank" rel="noopener noreferrer" className="hover:text-green-500">
+          <a href="https://github.com/consumeobeydie" target="_blank" rel="noopener noreferrer" className="hover:text-green-500">
             github.com/consumeobeydie
           </a>
         </div>
