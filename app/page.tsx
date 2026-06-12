@@ -51,6 +51,7 @@ const projects = [
   { name: 'Arc Agent API', desc: 'X402 + ERC-8004 + ERC-8183', url: 'https://github.com/consumeobeydie/arc-agent-api', status: 'LIVE' },
   { name: 'Arc MCP Server', desc: 'Claude Code blockchain tools', url: 'https://github.com/consumeobeydie/arc-mcp-server', status: 'LIVE' },
   { name: 'Arc Intelligence Dashboard', desc: 'Real-time testnet dashboard', url: 'https://arc-intelligence-dashboard.vercel.app', status: 'LIVE' },
+  { name: 'Multi-Agent Dashboard', desc: 'Live agent & mission tracker', url: '/multi-agent', status: 'LIVE' },
   { name: 'Hermes Arc X402', desc: 'Nous Research skill', url: 'https://github.com/consumeobeydie/hermes-arc-x402', status: 'LIVE' },
 ];
 
