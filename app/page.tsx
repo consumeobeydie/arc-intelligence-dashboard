@@ -35,6 +35,8 @@ const contracts = [
   { name: 'Lottery', address: '0xB80dc31CE5da607051E37f005D44990b51D468F6' },
   { name: 'Vesting', address: '0x240365eAD3de331268d18B4E0c50C33f337Db86a' },
   { name: 'DAO', address: '0x3f94600877D990dd966dd83493b454A726A73d95' },
+  { name: 'MultiAgentOrchestrator', address: '0xe81f5BA4181eA29061C3C229c8D6EB4cFE56639C' },
+  { name: 'ArcUSDCVault', address: '0x6C13dA317B65474299F6fDee02daDd6626Eb2BFe' },
 ];
 
 const prs = [
@@ -45,6 +47,10 @@ const prs = [
   'docs/unified-agentic-flow-example',
   'docs/arc-intelligence-dashboard-example',
   'docs/arc-mcp-server-example',
+  'docs/multi-agent-orchestrator-example',
+  'docs/transaction-memo-integration',
+  'docs/erc4626-vault-example',
+  'docs/smart-economy-engine-example',
 ];
 
 const projects = [
@@ -52,6 +58,7 @@ const projects = [
   { name: 'Arc MCP Server', desc: 'Claude Code blockchain tools', url: 'https://github.com/consumeobeydie/arc-mcp-server', status: 'LIVE' },
   { name: 'Arc Intelligence Dashboard', desc: 'Real-time testnet dashboard', url: 'https://arc-intelligence-dashboard.vercel.app', status: 'LIVE' },
   { name: 'Multi-Agent Dashboard', desc: 'Live agent & mission tracker', url: '/multi-agent', status: 'LIVE' },
+  { name: 'ArcUSDCVault Dashboard', desc: 'ERC-4626 vault & agent yield tracker', url: '/vault', status: 'LIVE' },
   { name: 'Hermes Arc X402', desc: 'Nous Research skill', url: 'https://github.com/consumeobeydie/hermes-arc-x402', status: 'LIVE' },
 ];
 
