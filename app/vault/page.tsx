@@ -74,10 +74,10 @@ export default function VaultPage() {
           mainShares: mainShares as bigint,
           agentBValue,
           missionCount: missions as bigint,
-          agentARep: (agentA as any[])[4] as bigint,
-          agentBRep: (agentB as any[])[4] as bigint,
-          agentAMissions: (agentA as any[])[5] as bigint,
-          agentBMissions: (agentB as any[])[5] as bigint,
+          agentARep: ((agentA as unknown) as any[])[4] as bigint,
+          agentBRep: ((agentB as unknown) as any[])[4] as bigint,
+          agentAMissions: ((agentA as unknown) as any[])[5] as bigint,
+          agentBMissions: ((agentB as unknown) as any[])[5] as bigint,
         });
         setLastUpdate(new Date().toLocaleTimeString());
       } catch (e) {
